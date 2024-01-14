@@ -2,7 +2,16 @@
 
 { pkgs, pkgs-unstable, inputs, ... }:
 let inherit (inputs) self;
-in {
+  nix-software-center = import (pkgs.fetchFromGitHub {
+    owner = "snowfallorg";
+    repo = "nix-software-center";
+    rev = "0.1.2";
+    sha256 = "xiqF1mP8wFubdsAQ1BmfjzCgOD3YZf7EGWl9i69FTls=";
+  }) {};
+in
+
+
+{
   # Enable NetworkManager for wireless networking,
   # You can configure networking with "nmtui" command.
   networking.useDHCP = true;
@@ -10,10 +19,25 @@ in {
 
   users.users = {
     root = {
-      initialHashedPassword = "$6$4PztZ9zPslF1Hhgl$pzmd0KzEWMvxAnfXImzqOra.ZNZsbjhNymSjAZRCPaImJHgZHBQJocx6pHWk0W8EpxqrVBVq4TzGjRN.CtQPy0";
+      initialHashedPassword = "$6$.JCPZBhKIZIZhPwC$w380mHIfpRlA.4Oyg680mFjVikJz40MO/TAe7EfyVcglSa.aa538WCshgOrFQgPATOlTtyU0E7DjORTe9Q7BQ/";
       openssh.authorizedKeys.keys = [ "sshKey_placeholder" ];
     };
   };
+
+  # Define a user account. Don't forget to set a password with ‘passwd’.
+  users.users.cordula = {
+    isNormalUser = true;
+    description = "Cordula";
+    uid = 1000;
+    extraGroups = [ "wheel" "networkmanager" ];
+    #openssh.authorizedKeys.keys = [ "ssh-dss AAABBNRT... adminvetter@hostsysname" ];
+    packages = with pkgs; [
+      firefox
+    #  thunderbird
+    ];
+  };
+
+  users.groups.cordula.gid = 1000;
 
   ## enable GNOME desktop.
   ## You need to configure a normal, non-root user.
@@ -22,6 +46,42 @@ in {
   #  desktopManager.gnome.enable = true;
   #  displayManager.gdm.enable = true;
   # };
+
+  services.xserver = {
+    enable = true;
+    displayManager.lightdm.enable = true;
+    desktopManager.cinnamon.enable = true;
+  };
+
+  # Configure keymap in X11
+  services.xserver = {
+    layout = "de";
+    xkbVariant = "";
+  };
+
+  # Configure console keymap
+  console.keyMap = "de";
+
+  # Enable CUPS to print documents.
+  services.printing.enable = true;
+
+  # Enable sound with pipewire.
+  sound.enable = true;
+  hardware.pulseaudio.enable = false;
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+    # If you want to use JACK applications, uncomment this
+    #jack.enable = true;
+
+    # use the example session manager (no others are packaged yet so this is enabled by default,
+    # no need to redefine it in your config for now)
+    #media-session.enable = true;
+  };
+
 
   ## enable ZFS auto snapshot on datasets
   ## You need to set the auto snapshot property to "true"
@@ -56,13 +116,76 @@ in {
 
   security = {
     doas.enable = true;
-    sudo.enable = false;
+    sudo.enable = true;
   };
+
+  # SoloKeys:
+   programs.gnupg.agent = {
+       enable = true;
+       enableSSHSupport = true;
+   };
+#   security.pam.services = {
+#       login.u2fAuth = true;
+#       sudo.u2fAuth = true;
+#   };
+#   # https://github.com/solokeys/solo2-cli/blob/main/70-solo2.rules
+#   services.udev.packages = [
+#       pkgs.yubikey-personalization
+#       (pkgs.writeTextFile {
+#       name = "wally_udev";
+#       text = 
+#           # NXP LPC55 ROM bootloader (unmodified)
+#           SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1fc9", ATTRS{idProduct}=="0021", TAG+="uaccess"
+#           # NXP LPC55 ROM bootloader (with Solo 2 VID:PID)
+#           SUBSYSTEM=="hidraw", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="b000", TAG+="uaccess"
+#           # Solo 2
+#           SUBSYSTEM=="tty", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="beee", TAG+="uaccess"
+#           # Solo 2
+#           SUBSYSTEM=="usb", ATTRS{idVendor}=="1209", ATTRS{idProduct}=="beee", TAG+="uaccess"
+#       ;
+#       destination = "/etc/udev/rules.d/70-solo2.rules";
+#       })
+#   ];
+
 
   environment.systemPackages = builtins.attrValues {
     inherit (pkgs)
       mg # emacs-like editor
       jq # other programs
+      vim
+      wget
+
+      keepassxc
+
+      firefox
+      thunderbird
+      libreoffice
+
+      gimp
+      inkscape
+#      converseen # not found
+      jhead
+      exiftool
+
+      htop
+
+#      kicad
+#      freecad
+#      cura
+#      ghostwriter
+#      librecad
+
+#      kile
+#      texlive
+
+      #https://github.com/phrogg/solokey-full-disk-encryption
+      fido2luks
+      cargo
+      cmake
+      gnumake
+      clang
+
+      docker
     ;
     # By default, the system will only use packages from the
     # stable channel. i.e.
@@ -72,6 +195,12 @@ in {
     # inherit (pkgs-unstable) my-favorite-unstable-package;
     # You can also add more
     # channels to pin package version.
+
+    # List packages installed in system profile. To search, run:
+    # $ nix search wget
+    #  nix-software-center
+    #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+    #  wget
   };
 
   # Safety mechanism: refuse to build unless everything is
