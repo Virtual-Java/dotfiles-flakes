@@ -2,18 +2,18 @@
   zfs-root = {
     boot = {
       devNodes = "/dev/disk/by-id/";
-      bootDevices = [ "bootDevices_placeholder" ];
+      bootDevices = [  "bootDevices_placeholder" ];
       immutable.enable = false;
       removableEfi = true;
       luks.enable = false;
     };
   };
-  boot.initrd.availableKernelModules = [ "kernelModules_placeholder" ];
+  boot.initrd.availableKernelModules = [  "kernelModules_placeholder" ];
   boot.kernelParams = [ ];
-  networking.hostId = "abcd1234";
+  networking.hostId = "hostID_placeholder";
   # read changeHostName.txt file.
-  networking.hostName = "exampleHost";
-  time.timeZone = "Europe/Berlin";
+  networking.hostName = "hostName_placeholder";
+  time.timeZone = "timeZone_placeholder";
 
   # import preconfigured profiles
   imports = [
