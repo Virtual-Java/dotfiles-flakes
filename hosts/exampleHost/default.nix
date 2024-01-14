@@ -5,7 +5,7 @@
       bootDevices = [  "bootDevices_placeholder" ];
       immutable.enable = false;
       removableEfi = true;
-      luks.enable = false;
+      luks.enable = true;
     };
   };
   boot.initrd.availableKernelModules = [  "kernelModules_placeholder" ];
