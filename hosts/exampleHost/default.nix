@@ -2,15 +2,15 @@
   zfs-root = {
     boot = {
       devNodes = "/dev/disk/by-id/";
-      bootDevices = [ "bootDevices_placeholder" ];
+      bootDevices = [  "ata-KIOXIA-EXCERIA_SATA_SSD_41LB847NKFZ2" ];
       immutable.enable = false;
       removableEfi = true;
-      luks.enable = false;
+      luks.enable = true;
     };
   };
-  boot.initrd.availableKernelModules = [ "kernelModules_placeholder" ];
+  boot.initrd.availableKernelModules = [  "xhci_pci" "ehci_pci" "ahci" "usb_storage" "sd_mod" "rtsx_pci_sdmmc" ];
   boot.kernelParams = [ ];
-  networking.hostId = "abcd1234";
+  networking.hostId = "962693f8";
   # read changeHostName.txt file.
   networking.hostName = "exampleHost";
   time.timeZone = "Europe/Berlin";
