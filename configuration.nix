@@ -39,6 +39,20 @@ in
 
   users.groups.cordula.gid = 1000;
 
+  # languge
+  i18n.defaultLocale = "de_DE.UTF-8";
+#  i18n.extraLocaleSettings = {
+#    LC_MESSAGES = "en_US.UTF-8";
+#    LC_TIME = "de_DE.UTF-8";
+#    defaultLocale = "de_DE.UTF-8";
+#    LANG = "de_DE.UTF-8";
+#    supportedLocales = "de_DE.UTF-8";
+##    LC_ALL = "de_DE.UTF-8";
+#    #LC_MESSAGES=en_US.UTF-8
+#    #LC_TIME=de_DE.UTF-8
+#    #defaultLocale=en_US.UTF-8
+#  };
+
   ## enable GNOME desktop.
   ## You need to configure a normal, non-root user.
   # services.xserver = {
@@ -51,6 +65,8 @@ in
     enable = true;
     displayManager.lightdm.enable = true;
     desktopManager.cinnamon.enable = true;
+#    displayManager.sddm.enable = true;
+#    desktopManager.plasma5.enable = true;
   };
 
   # Configure keymap in X11
@@ -160,6 +176,9 @@ in
       firefox
       thunderbird
       libreoffice
+
+      librecad
+      freecad
 
       gimp
       inkscape
